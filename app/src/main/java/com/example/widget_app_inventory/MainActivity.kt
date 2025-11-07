@@ -1,47 +1,55 @@
 package com.example.widget_app_inventory
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.widget_app_inventory.ui.theme.WidgetAppInventoryTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
-            WidgetAppInventoryTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+            MainScreen()
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+    @Composable
+    fun MainScreen() {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(text = "MainActivity", style = MaterialTheme.typography.headlineSmall)
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    WidgetAppInventoryTheme {
-        Greeting("Android")
+            Button(onClick = { startActivity(Intent(this@MainActivity, LoginActivity::class.java)) }) {
+                Text(text = "Login")
+            }
+
+            Button(onClick = { startActivity(Intent(this@MainActivity, InventoryListActivity::class.java)) }) {
+                Text(text = "Inventory List")
+            }
+
+            Button(onClick = { startActivity(Intent(this@MainActivity, ItemDetailActivity::class.java)) }) {
+                Text(text = "Item Detail")
+            }
+
+            Button(onClick = { startActivity(Intent(this@MainActivity, ManageInventoryActivity::class.java)) }) {
+                Text(text = "Manage Inventory")
+            }
+
+            Button(onClick = { startActivity(Intent(this@MainActivity, SettingsActivity::class.java)) }) {
+                Text(text = "Settings")
+            }
+        }
     }
 }

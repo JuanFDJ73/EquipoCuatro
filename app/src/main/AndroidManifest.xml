@@ -22,6 +22,45 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true"
+            android:label="@string/manage"
+            android:theme="@style/Theme.WidgetAppInventory" />
+
+        <activity
+            android:name=".InventoryListActivity"
+            android:exported="true"
+            android:label="Inventory List"
+            android:theme="@style/Theme.WidgetAppInventory" />
+
+        <activity
+            android:name=".ItemDetailActivity"
+            android:exported="true"
+            android:label="Item Detail"
+            android:theme="@style/Theme.WidgetAppInventory" />
+
+        <activity
+            android:name=".ManageInventoryActivity"
+            android:exported="true"
+            android:label="Manage Inventory"
+            android:theme="@style/Theme.WidgetAppInventory" />
+
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="true"
+            android:label="Settings"
+            android:theme="@style/Theme.WidgetAppInventory" />
+
+        <receiver android:name=".InventoryWidgetProvider" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info" />
+        </receiver>
     </application>
 
 </manifest>
