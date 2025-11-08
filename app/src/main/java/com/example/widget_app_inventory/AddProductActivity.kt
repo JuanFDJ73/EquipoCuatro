@@ -14,24 +14,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
-class ManageInventoryActivity : ComponentActivity() {
+class AddProductActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ManageInventoryScreen()
+            AddProductScreen()
         }
     }
 
     @Composable
-    fun ManageInventoryScreen() {
+    fun AddProductScreen() {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Manage Inventory (placeholder)", style = MaterialTheme.typography.headlineSmall)
-            Button(onClick = { startActivity(Intent(this@ManageInventoryActivity, MainActivity::class.java)); finish() }) {
-                Text(text = "Back to Main")
+            Text(text = "Add Product (placeholder)", style = MaterialTheme.typography.headlineSmall)
+            Button(onClick = { startActivity(Intent(this@AddProductActivity, InventoryListActivity::class.java)); finish() }) {
+                Text(text = "Back to Inventory")
             }
         }
     }

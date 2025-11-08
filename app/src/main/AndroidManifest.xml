@@ -12,22 +12,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WidgetAppInventory">
         <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.WidgetAppInventory">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity
             android:name=".LoginActivity"
             android:exported="true"
             android:label="@string/manage"
-            android:theme="@style/Theme.WidgetAppInventory" />
+            android:theme="@style/Theme.WidgetAppInventory">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".InventoryListActivity"
@@ -42,15 +35,15 @@
             android:theme="@style/Theme.WidgetAppInventory" />
 
         <activity
-            android:name=".ManageInventoryActivity"
+            android:name=".AddProductActivity"
             android:exported="true"
-            android:label="Manage Inventory"
+            android:label="Add Product"
             android:theme="@style/Theme.WidgetAppInventory" />
 
         <activity
-            android:name=".SettingsActivity"
+            android:name=".EditArticleActivity"
             android:exported="true"
-            android:label="Settings"
+            android:label="Edit Article"
             android:theme="@style/Theme.WidgetAppInventory" />
 
         <receiver android:name=".InventoryWidgetProvider" android:exported="true">

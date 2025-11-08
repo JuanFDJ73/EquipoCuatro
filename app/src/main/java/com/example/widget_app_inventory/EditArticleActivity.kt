@@ -14,24 +14,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
-class SettingsActivity : ComponentActivity() {
+class EditArticleActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val itemId = intent?.getIntExtra("itemId", -1) ?: -1
         setContent {
-            SettingsScreen()
+            EditArticleScreen(itemId)
         }
     }
 
     @Composable
-    fun SettingsScreen() {
+    fun EditArticleScreen(itemId: Int) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Settings (placeholder)", style = MaterialTheme.typography.headlineSmall)
-            Button(onClick = { startActivity(Intent(this@SettingsActivity, MainActivity::class.java)); finish() }) {
-                Text(text = "Back to Main")
+            Text(text = "Edit Article (placeholder) for itemId=$itemId", style = MaterialTheme.typography.headlineSmall)
+            Button(onClick = { startActivity(Intent(this@EditArticleActivity, InventoryListActivity::class.java)); finish() }) {
+                Text(text = "Back to Inventory")
             }
         }
     }

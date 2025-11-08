@@ -30,8 +30,8 @@ class LoginActivity : ComponentActivity() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(text = "Login (placeholder)", style = MaterialTheme.typography.headlineSmall)
-            Button(onClick = { startActivity(Intent(this@LoginActivity, MainActivity::class.java)); finish() }) {
-                Text(text = "Back to Main")
+            Button(onClick = { startActivity(Intent(this@LoginActivity, InventoryListActivity::class.java)); finish() }) {
+                Text(text = "Inventory List")
             }
         }
     }

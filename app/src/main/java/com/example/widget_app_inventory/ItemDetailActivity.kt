@@ -17,22 +17,26 @@ import androidx.compose.ui.Modifier
 class ItemDetailActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val itemId = intent?.getLongExtra("itemId", -1L) ?: -1L
         setContent {
-            ItemDetailScreen()
+            ItemDetailScreen(itemId)
         }
     }
 
     @Composable
-    fun ItemDetailScreen() {
+    fun ItemDetailScreen(itemId: Long) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(text = "Item Detail (placeholder)", style = MaterialTheme.typography.headlineSmall)
-            Button(onClick = { startActivity(Intent(this@ItemDetailActivity, MainActivity::class.java)); finish() }) {
-                Text(text = "Back to Main")
-            }
+            Text(text = "ItemId: $itemId")
+            Button(onClick = {
+                val i = Intent(this@ItemDetailActivity, EditArticleActivity::class.java)
+                i.putExtra("itemId", itemId)
+                startActivity(i)
+            }) { Text(text = "Editar artículo") }
         }
     }
 }
