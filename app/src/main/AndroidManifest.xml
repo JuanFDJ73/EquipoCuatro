@@ -12,16 +12,48 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WidgetAppInventory">
         <activity
-            android:name=".MainActivity"
+            android:name=".LoginActivity"
             android:exported="true"
-            android:label="@string/app_name"
+            android:label="@string/manage"
             android:theme="@style/Theme.WidgetAppInventory">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".InventoryListActivity"
+            android:exported="true"
+            android:label="Inventory List"
+            android:theme="@style/Theme.WidgetAppInventory" />
+
+        <activity
+            android:name=".ItemDetailActivity"
+            android:exported="true"
+            android:label="Item Detail"
+            android:theme="@style/Theme.WidgetAppInventory" />
+
+        <activity
+            android:name=".AddProductActivity"
+            android:exported="true"
+            android:label="Add Product"
+            android:theme="@style/Theme.WidgetAppInventory" />
+
+        <activity
+            android:name=".EditArticleActivity"
+            android:exported="true"
+            android:label="Edit Article"
+            android:theme="@style/Theme.WidgetAppInventory" />
+
+        <receiver android:name=".InventoryWidgetProvider" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info" />
+        </receiver>
     </application>
 
 </manifest>
