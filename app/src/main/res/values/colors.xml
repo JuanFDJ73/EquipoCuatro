@@ -7,11 +7,4 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <!-- Paleta principal -->
-    <color name="Primary">#FA8523</color> <!-- Naranja vibrante -->
-    <color name="Secondary">#E7522E</color> <!-- Naranja oscuro -->
-    <color name="Background">#CC000000</color> <!-- Negro translúcido -->
-    <color name="Surface">#424242</color> <!-- Gris oscuro -->
-    <color name="TextPrimary">#FFFFFF</color> <!-- Blanco -->
-    <color name="TextSecondary">#BDBDBD</color> <!-- Gris claro -->
 </resources>
