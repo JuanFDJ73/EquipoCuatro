@@ -57,6 +57,7 @@ class InventoryListActivity : ComponentActivity() {
     val total by vm.total.collectAsState()
     val show by vm.showBalance.collectAsState()
     val items by vm.items.collectAsState()
+    val isLoading by vm.isLoading.collectAsState()
 
     //Background
     Surface(modifier = Modifier.fillMaxSize(), color = colorResource(id = R.color.Background)) {
@@ -151,6 +152,14 @@ class InventoryListActivity : ComponentActivity() {
                         }
 
                     }
+
+                        // Mostrar indicador de progreso circular naranja mientras se carga
+                        if (isLoading) {
+                            androidx.compose.material3.CircularProgressIndicator(
+                                color = colorResource(id = R.color.Primary),
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        }
                 }
             }
         }
