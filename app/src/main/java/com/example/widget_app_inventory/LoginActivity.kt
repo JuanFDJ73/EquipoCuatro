@@ -145,7 +145,12 @@ class LoginActivity : FragmentActivity() {
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() }
                     ) {
-                        biometricPrompt.authenticate(promptInfo)
+                        // Desactivada autenticación biométrica
+                        // biometricPrompt.authenticate(promptInfo)
+
+                        // Ir directamente al inventario
+                        startActivity(Intent(this@LoginActivity, InventoryListActivity::class.java))
+                        finish()
                     }
             )
         }
