@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Widget-App-Inventory</string>
+    <string name="app_name">InventoryWidget</string>
     <string name="hello">Hello Widget-App-Inventory!</string>
     <string name="icon_desc">Icono del widget</string>
     <string name="refresh_desc">Refrescar widget</string>

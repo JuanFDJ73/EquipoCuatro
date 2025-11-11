@@ -116,7 +116,6 @@ class LoginActivity : FragmentActivity() {
                     color = colorResource(id = R.color.Primary),
                     fontSize = 48.sp,
                     fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.Cursive,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .padding(top = 8.dp, bottom = 16.dp)
