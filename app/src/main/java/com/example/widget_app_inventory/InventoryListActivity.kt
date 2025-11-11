@@ -45,7 +45,7 @@ import androidx.compose.ui.unit.sp
 class InventoryListActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val vm = ViewModelProvider(this)[InventoryViewModel::class.java]
+    val vm = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))[InventoryViewModel::class.java]
         setContent {
             InventoryListScreen(vm)
         }

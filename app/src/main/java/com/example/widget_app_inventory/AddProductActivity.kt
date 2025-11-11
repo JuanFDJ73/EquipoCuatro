@@ -23,10 +23,27 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 class AddProductActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val vm = androidx.lifecycle.ViewModelProvider(this, androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.getInstance(application))[com.example.widget_app_inventory.viewmodel.InventoryViewModel::class.java]
+
         setContent {
             AddProductScreen(onBack = {
                 startActivity(Intent(this, InventoryListActivity::class.java))
                 finish()
+            }, onSave = { codigo, nombre, precio, cantidad ->
+                // Crear el item y guardarlo
+                val priceDouble = precio.toDoubleOrNull() ?: 0.0
+                val qty = cantidad.toIntOrNull() ?: 0
+                val item = com.example.widget_app_inventory.model.Item(
+                    id = 0,
+                    name = nombre,
+                    price = priceDouble,
+                    quantity = qty
+                )
+                vm.insertItem(item) {
+                    // Despues de guardar, volver a la lista
+                    startActivity(Intent(this, InventoryListActivity::class.java))
+                    finish()
+                }
             })
         }
     }
@@ -34,7 +51,7 @@ class AddProductActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddProductScreen(onBack: () -> Unit) {
+fun AddProductScreen(onBack: () -> Unit, onSave: (codigo: String, nombre: String, precio: String, cantidad: String) -> Unit) {
     var codigo by remember { mutableStateOf("") }
     var nombre by remember { mutableStateOf("") }
     var precio by remember { mutableStateOf("") }
@@ -132,7 +149,7 @@ fun AddProductScreen(onBack: () -> Unit) {
             Spacer(Modifier.height(24.dp))
 
             Button(
-                onClick = { /* guardar en Room aquí */ },
+                onClick = { if (isFormValid) onSave(codigo, nombre, precio, cantidad) },
                 enabled = isFormValid,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFFFF9800),

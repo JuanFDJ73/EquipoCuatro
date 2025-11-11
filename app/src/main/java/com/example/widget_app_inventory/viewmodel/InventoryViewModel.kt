@@ -1,6 +1,7 @@
 package com.example.widget_app_inventory.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.widget_app_inventory.data.InventoryRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -8,9 +9,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
 
-class InventoryViewModel : ViewModel() {
+class InventoryViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repo = InventoryRepository()
+    private val repo = InventoryRepository(application.applicationContext)
 
     private val _items = MutableStateFlow<List<com.example.widget_app_inventory.model.Item>>(emptyList())
     val items: StateFlow<List<com.example.widget_app_inventory.model.Item>> = _items
@@ -36,10 +37,19 @@ class InventoryViewModel : ViewModel() {
         viewModelScope.launch {
             _isLoading.value = true
             // Simular un retardo de carga
-            delay(600)
-            _items.value = repo.getItems()
-            _total.value = repo.computeTotal()
+            delay(200)
+            val list = repo.getItems()
+            _items.value = list
+            _total.value = repo.computeTotal(list)
             _isLoading.value = false
+        }
+    }
+
+    fun insertItem(item: com.example.widget_app_inventory.model.Item, onDone: (() -> Unit)? = null) {
+        viewModelScope.launch {
+            repo.insertItem(item)
+            refresh()
+            onDone?.invoke()
         }
     }
 }
