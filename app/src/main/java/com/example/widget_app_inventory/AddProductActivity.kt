@@ -40,6 +40,19 @@ class AddProductActivity : ComponentActivity() {
                     quantity = qty
                 )
                 vm.insertItem(item) {
+                    // Notificar widgets para refrescar
+                    try {
+                        val mgr = android.appwidget.AppWidgetManager.getInstance(this)
+                        val ids = mgr.getAppWidgetIds(android.content.ComponentName(this, InventoryWidgetProvider::class.java))
+                        val update = Intent(this, InventoryWidgetProvider::class.java).apply {
+                            action = android.appwidget.AppWidgetManager.ACTION_APPWIDGET_UPDATE
+                            putExtra(android.appwidget.AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+                        }
+                        sendBroadcast(update)
+                    } catch (t: Throwable) {
+                        // ignore
+                    }
+
                     // Despues de guardar, volver a la lista
                     startActivity(Intent(this, InventoryListActivity::class.java))
                     finish()

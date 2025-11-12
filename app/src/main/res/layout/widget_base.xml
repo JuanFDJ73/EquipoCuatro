@@ -3,106 +3,114 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="12dp"
-    android:background="#CC000000">
+    android:padding="10dp"
+    android:background="@drawable/widget_bg">
 
-    <!-- Top row: logo left + question right -->
+    <!-- Fila superior: logo a la izquierda + pregunta y ojo a la derecha -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
+        <!-- Logo + etiqueta de Inventario (izquierda) -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_gravity="start">
+            android:gravity="center_horizontal">
 
             <ImageView
                 android:id="@+id/widgetLogo"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@mipmap/ic_launcher"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:src="@drawable/ic_widget"
                 android:contentDescription="@string/icon_desc"
-                android:scaleType="centerCrop" />
-
-            <TextView
-                android:id="@+id/widgetInventoryLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/inventory_label"
-                android:textColor="#e7522e"
-                android:textSize="14sp"
-                android:layout_marginTop="2dp"
-                android:textStyle="bold" />
+                android:scaleType="centerInside"
+                android:adjustViewBounds="true" />
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/widgetQuestion"
+        <!-- Columna derecha: pregunta + ojo y saldo -->
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/question"
-            android:textColor="@android:color/white"
-            android:textSize="14sp"
-            android:gravity="end"
-            android:layout_marginStart="8dp" />
+            android:orientation="vertical"
+            android:paddingStart="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/widgetQuestion"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/question"
+                    android:textColor="@color/TextPrimary"
+                    android:textSize="14sp" />
+
+                <ImageView
+                    android:id="@+id/widgetEye"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_view"
+                    android:contentDescription="@string/eye_closed_desc"
+                    android:padding="4dp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/widgetBalance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="$ ****"
+                android:textColor="@color/TextPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:layout_marginTop="6dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <!-- Balance row: balance text + eye icon -->
+    <!-- Fila inferior: texto de gestión centrado e ícono de ajustes a la derecha -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:gravity="center_vertical">
 
         <TextView
-            android:id="@+id/widgetBalance"
-            android:layout_width="0dp"
+            android:id="@+id/widgetInventoryLabel"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="$ ****"
-            android:textColor="@android:color/white"
-            android:textSize="18sp"
+            android:layout_marginTop="2dp"
+            android:text="@string/inventory_label"
+            android:textColor="@color/Secondary"
+            android:textSize="12sp"
             android:textStyle="bold" />
-
-        <ImageView
-            android:id="@+id/widgetEye"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:src="@drawable/ic_view"
-            android:contentDescription="@string/eye_closed_desc"
-            android:layout_marginStart="8dp"
-            android:padding="4dp" />
-
-    </LinearLayout>
-
-    <!-- Bottom row: manage action -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="end"
-        android:layout_marginTop="12dp">
 
         <TextView
             android:id="@+id/widgetManageText"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/manage"
-            android:textColor="@android:color/white"
+            android:textColor="@color/TextPrimary"
             android:textSize="13sp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginEnd="6dp" />
+            android:gravity="center" />
 
         <ImageView
             android:id="@+id/widgetManageIcon"
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:src="@mipmap/ic_launcher"
+            android:src="@drawable/settings"
             android:contentDescription="@string/manage" />
 
     </LinearLayout>
