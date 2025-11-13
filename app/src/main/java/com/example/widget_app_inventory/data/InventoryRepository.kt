@@ -27,6 +27,15 @@ class InventoryRepository(private val context: Context) {
         }
     }
 
+    suspend fun updateItem(item: Item): Boolean {
+        return try {
+            val rows = db.itemDao().update(item)
+            rows > 0
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     suspend fun deleteItem(id: Long): Boolean {
         return try {
             val rows = db.itemDao().deleteById(id)

@@ -18,4 +18,7 @@ interface ItemDao {
 
     @Query("DELETE FROM items WHERE id = :id")
     suspend fun deleteById(id: Long): Int
+    
+    @androidx.room.Update
+    suspend fun update(item: Item): Int
 }
