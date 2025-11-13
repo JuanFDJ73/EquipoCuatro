@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="widget_title" type="id" />
+    <item name="widget_info" type="id" />
+    <item name="widget_root" type="id" />
+</resources>
