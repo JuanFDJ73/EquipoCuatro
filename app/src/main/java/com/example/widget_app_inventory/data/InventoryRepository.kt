@@ -19,5 +19,22 @@ class InventoryRepository(private val context: Context) {
         return db.itemDao().insert(item)
     }
 
+    suspend fun getItem(id: Long): Item? {
+        return try {
+            db.itemDao().getById(id)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    suspend fun deleteItem(id: Long): Boolean {
+        return try {
+            val rows = db.itemDao().deleteById(id)
+            rows > 0
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     fun computeTotal(items: List<Item>): Double = items.sumOf { it.price * it.quantity }
 }
