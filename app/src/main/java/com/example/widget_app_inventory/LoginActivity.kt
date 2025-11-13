@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.activity.compose.setContent
 import androidx.core.content.ContextCompat
 import androidx.biometric.BiometricPrompt
+import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt.PromptInfo
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -43,17 +44,30 @@ class LoginActivity : FragmentActivity() {
 
     private lateinit var biometricPrompt: BiometricPrompt
     private lateinit var promptInfo: PromptInfo
+    private var isBiometricAvailable: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Prepare BiometricPrompt and prompt info
+        // Si ya hay sesión guardada, entrar directamente al inventario
+        val sessionPrefs = getSharedPreferences("session_prefs", MODE_PRIVATE)
+        val already = sessionPrefs.getBoolean("is_logged_in", false)
+        if (already) {
+            startActivity(Intent(this@LoginActivity, InventoryListActivity::class.java))
+            finish()
+            return
+        }
+
+        // Preparar BiometricPrompt e información del mensaje
         val executor = ContextCompat.getMainExecutor(this)
         biometricPrompt = BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                 super.onAuthenticationSucceeded(result)
-                // On success navigate to Inventory (Home)
+                // En éxito, navegar a Inventario (Inicio)
                 runOnUiThread {
+                    // Guardar sesión para que el usuario no tenga que iniciar sesión nuevamente
+                    this@LoginActivity.getSharedPreferences("session_prefs", MODE_PRIVATE)
+                        .edit().putBoolean("is_logged_in", true).apply()
                     startActivity(Intent(this@LoginActivity, InventoryListActivity::class.java))
                     finish()
                 }
@@ -79,6 +93,17 @@ class LoginActivity : FragmentActivity() {
             .setSubtitle("Ingrese su huella digital")
             .setNegativeButtonText("Cancelar")
             .build()
+
+        // Verificar si el dispositivo soporta biometría y tiene credenciales registradas
+        val biometricManager = BiometricManager.from(this)
+        val can = try {
+            // Preferir autenticadores fuertes; usar BIOMETRIC_STRONG únicamente
+            biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)
+        } catch (t: NoSuchMethodError) {
+            // Biblioteca/dispositivo antiguo - usar canAuthenticate sin argumentos
+            biometricManager.canAuthenticate()
+        }
+        isBiometricAvailable = (can == BiometricManager.BIOMETRIC_SUCCESS)
         setContent {
             LoginScreen()
         }
@@ -91,10 +116,10 @@ class LoginActivity : FragmentActivity() {
                 .fillMaxSize()
                 .background(color = colorResource(id = R.color.Surface))
         ) {
-            // Illustration image
+            // Imagen ilustrativa
             Image(
                 painter = painterResource(id = com.example.widget_app_inventory.R.drawable.image_login),
-                contentDescription = "Illustration",
+                contentDescription = "Ilustración",
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(top = 16.dp, end = 16.dp)
@@ -102,7 +127,7 @@ class LoginActivity : FragmentActivity() {
                 contentScale = ContentScale.Fit
             )
 
-            // Centered content
+            // Contenido centrado
             Column(
                 modifier = Modifier
                     .align(Alignment.Center)
@@ -110,7 +135,7 @@ class LoginActivity : FragmentActivity() {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Title
+                // Título
                 Text(
                     text = "Inventory",
                     color = colorResource(id = R.color.Primary),
@@ -127,7 +152,7 @@ class LoginActivity : FragmentActivity() {
                 // }
             }
 
-            // Fingerprint
+            // Huella digital
             val composition = rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.fingerprint)).value
             val progress = animateLottieCompositionAsState(
                 composition = composition,
@@ -145,12 +170,17 @@ class LoginActivity : FragmentActivity() {
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() }
                     ) {
-                        // Desactivada autenticación biométrica
-                        // biometricPrompt.authenticate(promptInfo)
-
-                        // Ir directamente al inventario
-                        startActivity(Intent(this@LoginActivity, InventoryListActivity::class.java))
-                        finish()
+                        // Si la biometría está disponible intenta autenticar, de lo contrario usa la sesión guardada y entra
+                        if (isBiometricAvailable) {
+                            biometricPrompt.authenticate(promptInfo)
+                        } else {
+                            Toast.makeText(this@LoginActivity, "Biometría no disponible o sin huellas registradas. Accediendo sin biometría.", Toast.LENGTH_SHORT).show()
+                            // Guardar sesión y continuar
+                            this@LoginActivity.getSharedPreferences("session_prefs", MODE_PRIVATE)
+                                .edit().putBoolean("is_logged_in", true).apply()
+                            startActivity(Intent(this@LoginActivity, InventoryListActivity::class.java))
+                            finish()
+                        }
                     }
             )
         }

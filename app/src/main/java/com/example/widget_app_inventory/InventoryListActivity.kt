@@ -45,7 +45,16 @@ import androidx.compose.ui.unit.sp
 class InventoryListActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-    val vm = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))[InventoryViewModel::class.java]
+        // Verificar sesión guardada: si no ha iniciado sesión, redirigir al LoginActivity
+        val sessionPrefs = getSharedPreferences("session_prefs", MODE_PRIVATE)
+        val logged = sessionPrefs.getBoolean("is_logged_in", false)
+        if (!logged) {
+            startActivity(Intent(this@InventoryListActivity, LoginActivity::class.java))
+            finish()
+            return
+        }
+
+        val vm = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))[InventoryViewModel::class.java]
         setContent {
             InventoryListScreen(vm)
         }
@@ -69,7 +78,10 @@ class InventoryListActivity : ComponentActivity() {
                         actions = {
                             IconButton(
                                 onClick = {
-                                    // navigate back to login (logout)
+                                    // Navegar de regreso al inicio de sesión (cerrar sesión)
+                                    // Limpiar sesión guardada
+                                    this@InventoryListActivity.getSharedPreferences("session_prefs", MODE_PRIVATE)
+                                        .edit().putBoolean("is_logged_in", false).apply()
                                     startActivity(Intent(this@InventoryListActivity, LoginActivity::class.java))
                                     finish()
                                 }
