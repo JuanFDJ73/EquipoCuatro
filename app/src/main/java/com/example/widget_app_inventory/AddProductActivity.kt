@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.lifecycle.lifecycleScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,38 +25,78 @@ class AddProductActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val vm = androidx.lifecycle.ViewModelProvider(this, androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.getInstance(application))[com.example.widget_app_inventory.viewmodel.InventoryViewModel::class.java]
+        val repo = com.example.widget_app_inventory.data.InventoryRepository(this)
 
         setContent {
             AddProductScreen(onBack = {
                 startActivity(Intent(this, InventoryListActivity::class.java))
                 finish()
             }, onSave = { codigo, nombre, precio, cantidad ->
-                // Crear el item y guardarlo
-                val priceDouble = precio.toDoubleOrNull() ?: 0.0
-                val qty = cantidad.toIntOrNull() ?: 0
-                val item = com.example.widget_app_inventory.model.Item(
-                    id = 0,
-                    name = nombre,
-                    price = priceDouble,
-                    quantity = qty
-                )
-                vm.insertItem(item) {
-                    // Notificar widgets para refrescar
-                    try {
-                        val mgr = android.appwidget.AppWidgetManager.getInstance(this)
-                        val ids = mgr.getAppWidgetIds(android.content.ComponentName(this, InventoryWidgetProvider::class.java))
-                        val update = Intent(this, InventoryWidgetProvider::class.java).apply {
-                            action = android.appwidget.AppWidgetManager.ACTION_APPWIDGET_UPDATE
-                            putExtra(android.appwidget.AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
-                        }
-                        sendBroadcast(update)
-                    } catch (t: Throwable) {
-                        // ignore
-                    }
+                // Antes de crear, validar que el código no exista
+                val codigoLong = codigo.toLongOrNull() ?: 0L
+                if (codigoLong > 0L) {
+                    // comprobar existencia en base de datos
+                    this@AddProductActivity.lifecycleScope.launchWhenResumed {
+                        val existing = repo.getItem(codigoLong)
+                        if (existing != null) {
+                            // Código duplicado: avisar al usuario
+                            android.widget.Toast.makeText(this@AddProductActivity, "El código ya existe. Cambia el código.", android.widget.Toast.LENGTH_LONG).show()
+                        } else {
+                            // insertar con el id proporcionado
+                            val priceDouble = precio.toDoubleOrNull() ?: 0.0
+                            val qty = cantidad.toIntOrNull() ?: 0
+                            val item = com.example.widget_app_inventory.model.Item(
+                                id = codigoLong,
+                                name = nombre,
+                                price = priceDouble,
+                                quantity = qty
+                            )
+                            vm.insertItem(item) {
+                                // Notificar widgets para refrescar
+                                try {
+                                    val mgr = android.appwidget.AppWidgetManager.getInstance(this@AddProductActivity)
+                                    val ids = mgr.getAppWidgetIds(android.content.ComponentName(this@AddProductActivity, InventoryWidgetProvider::class.java))
+                                    val update = Intent(this@AddProductActivity, InventoryWidgetProvider::class.java).apply {
+                                        action = android.appwidget.AppWidgetManager.ACTION_APPWIDGET_UPDATE
+                                        putExtra(android.appwidget.AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+                                    }
+                                    sendBroadcast(update)
+                                } catch (t: Throwable) {
+                                    // ignore
+                                }
 
-                    // Despues de guardar, volver a la lista
-                    startActivity(Intent(this, InventoryListActivity::class.java))
-                    finish()
+                                // Despues de guardar, volver a la lista
+                                startActivity(Intent(this@AddProductActivity, InventoryListActivity::class.java))
+                                finish()
+                            }
+                        }
+                    }
+                } else {
+                    // codigo no válido -> permitir autogenerado
+                    val priceDouble = precio.toDoubleOrNull() ?: 0.0
+                    val qty = cantidad.toIntOrNull() ?: 0
+                    val item = com.example.widget_app_inventory.model.Item(
+                        id = 0,
+                        name = nombre,
+                        price = priceDouble,
+                        quantity = qty
+                    )
+                    vm.insertItem(item) {
+                        try {
+                            val mgr = android.appwidget.AppWidgetManager.getInstance(this@AddProductActivity)
+                            val ids = mgr.getAppWidgetIds(android.content.ComponentName(this@AddProductActivity, InventoryWidgetProvider::class.java))
+                            val update = Intent(this@AddProductActivity, InventoryWidgetProvider::class.java).apply {
+                                action = android.appwidget.AppWidgetManager.ACTION_APPWIDGET_UPDATE
+                                putExtra(android.appwidget.AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+                            }
+                            sendBroadcast(update)
+                        } catch (t: Throwable) {
+                            // ignore
+                        }
+
+                        startActivity(Intent(this@AddProductActivity, InventoryListActivity::class.java))
+                        finish()
+                    }
                 }
             })
         }
