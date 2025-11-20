@@ -85,10 +85,18 @@ dependencies {
 
     // Compose
     implementation("androidx.activity:activity-compose:1.7.2")
+    implementation("androidx.compose.foundation:foundation:1.5.0")
     implementation("androidx.compose.ui:ui:1.5.0")
+    implementation("androidx.compose.ui:ui-text:1.5.0")
     implementation("androidx.compose.ui:ui-tooling-preview:1.5.0")
     implementation("androidx.compose.material3:material3:1.1.0")
     debugImplementation("androidx.compose.ui:ui-tooling:1.5.0")
+
+    // Lottie for Compose (fingerprint animation)
+    implementation("com.airbnb.android:lottie-compose:6.0.0")
+
+    // Biometric authentication
+    implementation("androidx.biometric:biometric:1.1.0")
 
     // Room
     implementation ("androidx.room:room-runtime:2.5.2")

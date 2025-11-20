@@ -45,7 +45,16 @@ import androidx.compose.ui.unit.sp
 class InventoryListActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val vm = ViewModelProvider(this)[InventoryViewModel::class.java]
+        // Verificar sesión guardada: si no ha iniciado sesión, redirigir al LoginActivity
+        val sessionPrefs = getSharedPreferences("session_prefs", MODE_PRIVATE)
+        val logged = sessionPrefs.getBoolean("is_logged_in", false)
+        if (!logged) {
+            startActivity(Intent(this@InventoryListActivity, LoginActivity::class.java))
+            finish()
+            return
+        }
+
+        val vm = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))[InventoryViewModel::class.java]
         setContent {
             InventoryListScreen(vm)
         }
@@ -57,6 +66,7 @@ class InventoryListActivity : ComponentActivity() {
     val total by vm.total.collectAsState()
     val show by vm.showBalance.collectAsState()
     val items by vm.items.collectAsState()
+    val isLoading by vm.isLoading.collectAsState()
 
     //Background
     Surface(modifier = Modifier.fillMaxSize(), color = colorResource(id = R.color.Background)) {
@@ -68,7 +78,10 @@ class InventoryListActivity : ComponentActivity() {
                         actions = {
                             IconButton(
                                 onClick = {
-                                    // navigate back to login (logout)
+                                    // Navegar de regreso al inicio de sesión (cerrar sesión)
+                                    // Limpiar sesión guardada
+                                    this@InventoryListActivity.getSharedPreferences("session_prefs", MODE_PRIVATE)
+                                        .edit().putBoolean("is_logged_in", false).apply()
                                     startActivity(Intent(this@InventoryListActivity, LoginActivity::class.java))
                                     finish()
                                 }
@@ -151,6 +164,14 @@ class InventoryListActivity : ComponentActivity() {
                         }
 
                     }
+
+                        // Mostrar indicador de progreso circular naranja mientras se carga
+                        if (isLoading) {
+                            androidx.compose.material3.CircularProgressIndicator(
+                                color = colorResource(id = R.color.Primary),
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        }
                 }
             }
         }

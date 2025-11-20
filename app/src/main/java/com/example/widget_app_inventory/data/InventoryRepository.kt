@@ -1,17 +1,49 @@
 package com.example.widget_app_inventory.data
 
+import android.content.Context
 import com.example.widget_app_inventory.model.Item
 
-class InventoryRepository {
+class InventoryRepository(private val context: Context) {
 
-    // Temporary in-memory sample data. Replace with DB/network later.
-    private val sample = listOf(
-        Item(1, "Widget A", 12500.0, 10),
-        Item(2, "Widget B", 49999.99, 2),
-        Item(3, "Widget C", 1000.0, 3)
-    )
+    private val db by lazy { AppDatabase.getInstance(context) }
 
-    fun getItems(): List<Item> = sample
+    suspend fun getItems(): List<Item> {
+        return try {
+            db.itemDao().getAll()
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
 
-    fun computeTotal(): Double = sample.sumOf { it.price * it.quantity }
+    suspend fun insertItem(item: Item): Long {
+        return db.itemDao().insert(item)
+    }
+
+    suspend fun getItem(id: Long): Item? {
+        return try {
+            db.itemDao().getById(id)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    suspend fun updateItem(item: Item): Boolean {
+        return try {
+            val rows = db.itemDao().update(item)
+            rows > 0
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    suspend fun deleteItem(id: Long): Boolean {
+        return try {
+            val rows = db.itemDao().deleteById(id)
+            rows > 0
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    fun computeTotal(items: List<Item>): Double = items.sumOf { it.price * it.quantity }
 }
