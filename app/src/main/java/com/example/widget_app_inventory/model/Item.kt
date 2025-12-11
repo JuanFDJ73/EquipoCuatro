@@ -6,6 +6,7 @@ import androidx.room.*
 data class Item(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
+    val codigo: String = "",
     val name: String,
     val price: Double,
     val quantity: Int

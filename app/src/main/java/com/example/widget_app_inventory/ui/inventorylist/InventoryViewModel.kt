@@ -1,20 +1,25 @@
-package com.example.widget_app_inventory.viewmodel
+package com.example.widget_app_inventory.ui.inventorylist
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.widget_app_inventory.data.InventoryRepository
+import com.example.widget_app_inventory.model.Item
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
+import javax.inject.Inject
 
-class InventoryViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class InventoryViewModel @Inject constructor(
+    private val repo: InventoryRepository,
+    application: Application
+) : AndroidViewModel(application) {
 
-    private val repo = InventoryRepository(application.applicationContext)
-
-    private val _items = MutableStateFlow<List<com.example.widget_app_inventory.model.Item>>(emptyList())
-    val items: StateFlow<List<com.example.widget_app_inventory.model.Item>> = _items
+    private val _items = MutableStateFlow<List<Item>>(emptyList())
+    val items: StateFlow<List<Item>> = _items
 
     private val _total = MutableStateFlow(0.0)
     val total: StateFlow<Double> = _total
@@ -36,7 +41,6 @@ class InventoryViewModel(application: Application) : AndroidViewModel(applicatio
     fun refresh() {
         viewModelScope.launch {
             _isLoading.value = true
-            // Simular un retardo de carga
             delay(200)
             val list = repo.getItems()
             _items.value = list
@@ -45,7 +49,7 @@ class InventoryViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun insertItem(item: com.example.widget_app_inventory.model.Item, onDone: (() -> Unit)? = null) {
+    fun insertItem(item: Item, onDone: (() -> Unit)? = null) {
         viewModelScope.launch {
             repo.insertItem(item)
             refresh()

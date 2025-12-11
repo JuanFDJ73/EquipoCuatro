@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import com.example.widget_app_inventory.data.InventoryRepository
+import com.example.widget_app_inventory.ui.login.LoginActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -18,8 +19,8 @@ import java.text.DecimalFormatSymbols
 class InventoryWidgetProvider : AppWidgetProvider() {
 
     companion object {
-        private const val ACTION_TOGGLE = "com.example.widget_app_inventory.ACTION_TOGGLE_SHOW"
-        private const val EXTRA_WIDGET_ID = "extra_widget_id"
+        const val ACTION_TOGGLE = "com.example.widget_app_inventory.ACTION_TOGGLE_SHOW"
+        const val EXTRA_WIDGET_ID = "extra_widget_id"
         private const val PREFS_NAME = "widget_prefs"
         private const val PREF_SHOW_PREFIX = "show_"
     }
@@ -42,6 +43,21 @@ class InventoryWidgetProvider : AppWidgetProvider() {
         if (action == ACTION_TOGGLE) {
             val id = intent.getIntExtra(EXTRA_WIDGET_ID, -1)
             if (id != -1) {
+                // Si no está logueado, abrir pantalla de login/registro y luego regresar al widget
+                val sessionPrefs = context.getSharedPreferences("session_prefs", Context.MODE_PRIVATE)
+                val already = sessionPrefs.getBoolean("is_logged_in", false)
+
+                if (!already) {
+                    // Lanzar LoginActivity indicando que se originó desde el toggle del widget
+                    val loginIntent = Intent(context, LoginActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        putExtra("from_widget_toggle", true)
+                        putExtra(EXTRA_WIDGET_ID, id)
+                    }
+                    context.startActivity(loginIntent)
+                    return
+                }
+
                 val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                 val key = PREF_SHOW_PREFIX + id
 
