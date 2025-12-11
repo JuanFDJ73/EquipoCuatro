@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/inventoryListFragment">
+
+    <fragment
+        android:id="@+id/inventoryListFragment"
+        android:name="com.example.widget_app_inventory.InventoryListFragment"
+        android:label="Inventario"
+        tools:layout="@layout/widget_base" />
+
+    <!-- Aquí puedes añadir otros destinos, como el fragmento para añadir productos -->
+    <!-- <fragment
+        android:id="@+id/addProductFragment"
+        android:name="com.example.widget_app_inventory.ui.AddProductFragment"
+        android..." /> -->
+
+</navigation>
+    

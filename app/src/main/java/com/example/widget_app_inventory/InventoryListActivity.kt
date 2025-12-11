@@ -41,24 +41,35 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.widget_app_inventory.AddProductActivity
 
-class InventoryListActivity : ComponentActivity() {
+
+import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
+import androidx.navigation.ui.setupActionBarWithNavController
+
+class InventoryListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Verificar sesión guardada: si no ha iniciado sesión, redirigir al LoginActivity
-        val sessionPrefs = getSharedPreferences("session_prefs", MODE_PRIVATE)
-        val logged = sessionPrefs.getBoolean("is_logged_in", false)
-        if (!logged) {
-            startActivity(Intent(this@InventoryListActivity, LoginActivity::class.java))
-            finish()
-            return
-        }
 
-        val vm = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))[InventoryViewModel::class.java]
-        setContent {
-            InventoryListScreen(vm)
-        }
+        // Verificar sesión... (tu código actual está bien)
+
+        // Establece el layout de la actividad PRIMERO
+        setContentView(R.layout.widget_base)
+
+        // Ahora puedes encontrar el NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
+
+        // Y configurar la ActionBar
+        setupActionBarWithNavController(navController)
+
+        // Ya NO necesitas esta línea, porque estás usando Vistas XML para el layout principal
+        // setContent { ... }
     }
+
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -185,5 +196,11 @@ class InventoryListActivity : ComponentActivity() {
         }
         val df = java.text.DecimalFormat("#,##0.00", symbols)
         return "$ ${df.format(amount)}"
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        val navController =
+            (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
+        return navController.navigateUp() || super.onSupportNavigateUp()
     }
 }
