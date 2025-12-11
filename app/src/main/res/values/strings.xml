@@ -9,4 +9,13 @@
     <string name="eye_open_desc">Mostrar saldo</string>
     <string name="eye_closed_desc">Ocultar saldo</string>
 
+    <!-- Login strings -->
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="login">Login</string>
+    <string name="register">Registrarse</string>
+    <string name="error_min_password">Mínimo 6 dígitos</string>
+    <string name="toast_login_incorrect">Login incorrecto</string>
+    <string name="toast_register_error">Error en el registro</string>
+
 </resources>

@@ -1,5 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.WidgetAppInventory" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.WidgetAppInventory" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+        <!-- Colores base -->
+        <item name="colorPrimary">@color/Primary</item>
+        <item name="colorPrimaryVariant">@color/Secondary</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <item name="colorSecondary">@color/Primary</item>
+        <item name="colorSecondaryVariant">@color/Secondary</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <!-- Fondo -->
+        <item name="android:windowBackground">@color/Background</item>
+
+        <!-- Textos -->
+        <item name="android:textColorPrimary">@color/TextPrimary</item>
+        <item name="android:textColorSecondary">@color/TextSecondary</item>
+
+        <!-- Styles extra -->
+        <item name="materialButtonStyle">@style/NoTintButton</item>
+        <item name="textInputStyle">@style/AlwaysOutlined</item>
+
+    </style>
+
+    <style name="NoTintButton" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@null</item>
+    </style>
+
+    <style name="AlwaysOutlined" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/white</item>
+        <item name="boxStrokeWidth">2dp</item>
+        <item name="boxStrokeWidthFocused">3dp</item>
+        <item name="hintTextColor">@color/white</item>
+    </style>
+
+    <!-- estilo pequeño para las esquinas del outline -->
+    <style name="TextInputOutlineRounded">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+
 </resources>
