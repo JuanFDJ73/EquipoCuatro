@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.widget_app_inventory.data.InventoryRepository
 import com.example.widget_app_inventory.model.Item
+import com.example.widget_app_inventory.ui.inventorylist.InventoryListActivity
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.*

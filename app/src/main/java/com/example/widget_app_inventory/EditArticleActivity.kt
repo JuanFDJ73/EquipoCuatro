@@ -20,6 +20,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.widget_app_inventory.data.InventoryRepository
 import com.example.widget_app_inventory.model.Item
+import com.example.widget_app_inventory.ui.inventorylist.InventoryListActivity
 import kotlinx.coroutines.launch
 
 class EditArticleActivity : ComponentActivity() {
