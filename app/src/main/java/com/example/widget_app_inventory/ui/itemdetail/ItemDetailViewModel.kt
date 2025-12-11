@@ -1,0 +1,33 @@
+package com.example.widget_app_inventory.ui.itemdetail
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.widget_app_inventory.data.InventoryRepository
+import com.example.widget_app_inventory.model.Item
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class ItemDetailViewModel @Inject constructor(
+    private val repo: InventoryRepository
+) : ViewModel() {
+
+    private val _item = MutableStateFlow<Item?>(null)
+    val item: StateFlow<Item?> = _item
+
+    fun loadItem(id: Long) {
+        viewModelScope.launch {
+            _item.value = repo.getItem(id)
+        }
+    }
+
+    fun deleteItem(id: Long, onDone: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            val deleted = repo.deleteItem(id)
+            onDone(deleted)
+        }
+    }
+}

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+        android:name=".MyApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -12,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WidgetAppInventory">
         <activity
-            android:name=".LoginActivity"
+            android:name=".ui.login.LoginActivity"
             android:exported="true"
             android:label="@string/manage"
             android:theme="@style/Theme.WidgetAppInventory">
@@ -23,25 +24,25 @@
         </activity>
 
         <activity
-            android:name=".InventoryListActivity"
+            android:name=".ui.inventorylist.InventoryListActivity"
             android:exported="true"
             android:label="Inventory List"
             android:theme="@style/Theme.WidgetAppInventory" />
 
         <activity
-            android:name=".ItemDetailActivity"
+            android:name=".ui.itemdetail.ItemDetailActivity"
             android:exported="true"
             android:label="Item Detail"
             android:theme="@style/Theme.WidgetAppInventory" />
 
         <activity
-            android:name=".AddProductActivity"
+            android:name=".ui.addproduct.AddProductActivity"
             android:exported="true"
             android:label="Add Product"
             android:theme="@style/Theme.WidgetAppInventory" />
 
         <activity
-            android:name=".EditArticleActivity"
+            android:name=".ui.editarticle.EditArticleActivity"
             android:exported="true"
             android:label="Edit Article"
             android:theme="@style/Theme.WidgetAppInventory" />
