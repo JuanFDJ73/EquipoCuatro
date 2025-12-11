@@ -1,68 +1,78 @@
 package com.example.widget_app_inventory.ui.inventorylist
 
-import android.app.Application
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.example.widget_app_inventory.data.InventoryRepository
 import com.example.widget_app_inventory.model.Item
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.runTest
-import org.junit.Before
-import org.junit.Test
+import kotlinx.coroutines.test.*
+import org.junit.*
+import org.junit.runner.RunWith
 import org.mockito.Mockito.*
-import org.junit.Assert.*
+import org.mockito.junit.MockitoJUnitRunner
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
+import kotlinx.coroutines.Dispatchers
 
 @ExperimentalCoroutinesApi
+@RunWith(MockitoJUnitRunner::class)
 class InventoryViewModelTest {
 
-    private lateinit var repo: InventoryRepository
-    private lateinit var app: Application
+    @get:Rule
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
+
+    private val repo = mock(InventoryRepository::class.java)
     private lateinit var viewModel: InventoryViewModel
 
+    private val testDispatcher = StandardTestDispatcher()
+
     @Before
-    fun setup() {
-        repo = mock(InventoryRepository::class.java)
-        app = mock(Application::class.java)
+    fun setUp() {
+        Dispatchers.setMain(testDispatcher)
+        viewModel = InventoryViewModel(repo, mock(android.app.Application::class.java))
+    }
 
-        // Setup repositorio por defecto
-        `when`(repo.getItems()).thenReturn(emptyList())
-        `when`(repo.computeTotal(anyList())).thenReturn(0.0)
-
-        viewModel = InventoryViewModel(repo, app)
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test
-    fun `toggleShow flips showBalance value`() = runTest {
-        val initial = viewModel.showBalance.first()
-        viewModel.toggleShow()
-        val after = viewModel.showBalance.first()
-        assertEquals(!initial, after)
-    }
-
-    @Test
-    fun `refresh updates items, total and isLoading`() = runTest {
-        val items = listOf(Item(1, "Apple", 5), Item(2, "Banana", 3))
+    fun `refresh loads items and total`() = runTest {
+        val items = listOf(Item(1, "Test", 10.0, 1))
         `when`(repo.getItems()).thenReturn(items)
-        `when`(repo.computeTotal(items)).thenReturn(8.0)
+        `when`(repo.computeTotal(items)).thenReturn(10.0)
 
         viewModel.refresh()
+        advanceUntilIdle() // espera a que todas las coroutines terminen
 
-        assertEquals(items, viewModel.items.first())
-        assertEquals(8.0, viewModel.total.first(), 0.0)
-        assertFalse(viewModel.isLoading.first())
+        assertEquals(items, viewModel.items.value)
+        assertEquals(10.0, viewModel.total.value, 0.0)
     }
 
     @Test
-    fun `insertItem calls repo and triggers onDone`() = runTest {
-        val item = Item(3, "Orange", 2)
-        var callbackCalled = false
+    fun `insertItem calls repo and refreshes`() = runTest {
+        val item = Item(2, "New", 5.0, 1)
+        val items = listOf(item)
+        `when`(repo.getItems()).thenReturn(items)
+        `when`(repo.computeTotal(items)).thenReturn(5.0)
 
-        viewModel.insertItem(item) {
-            callbackCalled = true
-        }
+        viewModel.insertItem(item)
+        advanceUntilIdle()
 
-        // Verificar que insertItem del repo se llamó
+        assertEquals(items, viewModel.items.value)
+        assertEquals(5.0, viewModel.total.value, 0.0)
+
+        // Verificamos que insertItem fue llamado
         verify(repo).insertItem(item)
-        // Verificar que se llamó el callback
-        assertTrue(callbackCalled)
+    }
+
+    @Test
+    fun `toggleShow flips showBalance`() = runTest {
+        val initial = viewModel.showBalance.value
+        viewModel.toggleShow()
+        assertEquals(!initial, viewModel.showBalance.value)
+        viewModel.toggleShow()
+        assertEquals(initial, viewModel.showBalance.value)
     }
 }

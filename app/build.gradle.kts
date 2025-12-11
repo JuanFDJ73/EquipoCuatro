@@ -118,14 +118,9 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.51")
     ksp("com.google.dagger:hilt-compiler:2.51")
 
-    // JUnit
+    // Tests
     testImplementation("junit:junit:4.13.2")
-    // Mockito
-    testImplementation("org.mockito:mockito-core:5.5.0")
-    testImplementation("org.mockito:mockito-inline:5.5.0")
-
-    // Para Kotlin
+    testImplementation("org.mockito:mockito-core:5.6.0")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.9.10")
-    // Coroutines (si tus ViewModels usan coroutines)
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
 }

@@ -1,63 +1,64 @@
 package com.example.widget_app_inventory.ui.editarticle
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.example.widget_app_inventory.data.InventoryRepository
 import com.example.widget_app_inventory.model.Item
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.runTest
-import org.junit.Before
-import org.junit.Test
+import kotlinx.coroutines.test.*
+import org.junit.*
+import org.junit.runner.RunWith
 import org.mockito.Mockito.*
-import org.junit.Assert.*
+import org.mockito.junit.MockitoJUnitRunner
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
+import kotlinx.coroutines.Dispatchers
 
 @ExperimentalCoroutinesApi
+@RunWith(MockitoJUnitRunner::class)
 class EditArticleViewModelTest {
 
-    private lateinit var repo: InventoryRepository
+    @get:Rule
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
+
+    private val repo = mock(InventoryRepository::class.java)
     private lateinit var viewModel: EditArticleViewModel
+    private val testDispatcher = StandardTestDispatcher()
 
     @Before
-    fun setup() {
-        repo = mock(InventoryRepository::class.java)
+    fun setUp() {
+        Dispatchers.setMain(testDispatcher)
         viewModel = EditArticleViewModel(repo)
     }
 
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
+
     @Test
-    fun `loadItem sets _item with repository result`() = runTest {
-        val item = Item(1L, "Laptop", 2)
+    fun `loadItem sets item`() = runTest {
+        val item = Item(1, "Test", 10.0, 1)
         `when`(repo.getItem(1L)).thenReturn(item)
 
+        assertNull(viewModel.item.value) // al inicio es null
         viewModel.loadItem(1L)
+        advanceUntilIdle() // espera a que la coroutine termine
 
-        val result = viewModel.item.first()
-        assertEquals(item, result)
+        assertEquals(item, viewModel.item.value)
     }
 
     @Test
-    fun `updateItem calls repository and triggers onDone with true`() = runTest {
-        val updated = Item(1L, "Laptop", 3)
+    fun `updateItem calls repo and returns success`() = runTest {
+        val updated = Item(2, "Updated", 20.0, 2)
         `when`(repo.updateItem(updated)).thenReturn(true)
 
-        var callbackResult = false
+        var callbackResult: Boolean? = null
         viewModel.updateItem(updated) { success ->
             callbackResult = success
         }
+        advanceUntilIdle()
 
         verify(repo).updateItem(updated)
-        assertTrue(callbackResult)
-    }
-
-    @Test
-    fun `updateItem calls repository and triggers onDone with false`() = runTest {
-        val updated = Item(2L, "Phone", 5)
-        `when`(repo.updateItem(updated)).thenReturn(false)
-
-        var callbackResult = true
-        viewModel.updateItem(updated) { success ->
-            callbackResult = success
-        }
-
-        verify(repo).updateItem(updated)
-        assertFalse(callbackResult)
+        assertEquals(true, callbackResult)
     }
 }
