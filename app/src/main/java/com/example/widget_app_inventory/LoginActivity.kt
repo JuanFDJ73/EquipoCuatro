@@ -46,8 +46,16 @@ class LoginActivity : FragmentActivity() {
     private lateinit var promptInfo: PromptInfo
     private var isBiometricAvailable: Boolean = false
 
+    // Si esta actividad fue iniciada desde el widget para realizar el toggle del ojo
+    private var fromWidgetToggle: Boolean = false
+    private var widgetToggleId: Int = -1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Leer si se inició desde el widget (para volver al widget y ejecutar toggle)
+        fromWidgetToggle = intent.getBooleanExtra("from_widget_toggle", false)
+        widgetToggleId = intent.getIntExtra("extra_widget_id", -1)
 
         // Si ya hay sesión guardada, entrar directamente al inventario
         val sessionPrefs = getSharedPreferences("session_prefs", MODE_PRIVATE)
@@ -68,8 +76,20 @@ class LoginActivity : FragmentActivity() {
                     // Guardar sesión para que el usuario no tenga que iniciar sesión nuevamente
                     this@LoginActivity.getSharedPreferences("session_prefs", MODE_PRIVATE)
                         .edit().putBoolean("is_logged_in", true).apply()
-                    startActivity(Intent(this@LoginActivity, InventoryListActivity::class.java))
-                    finish()
+
+                    if (fromWidgetToggle && widgetToggleId != -1) {
+                        // Enviar broadcast para que el widget ejecute la acción de toggle
+                        val toggleIntent = Intent(this@LoginActivity, InventoryWidgetProvider::class.java).apply {
+                            action = InventoryWidgetProvider.ACTION_TOGGLE
+                            putExtra(InventoryWidgetProvider.EXTRA_WIDGET_ID, widgetToggleId)
+                        }
+                        sendBroadcast(toggleIntent)
+                        // Cerrar y volver al lanzador / widget
+                        finish()
+                    } else {
+                        startActivity(Intent(this@LoginActivity, InventoryListActivity::class.java))
+                        finish()
+                    }
                 }
             }
 
@@ -178,8 +198,18 @@ class LoginActivity : FragmentActivity() {
                             // Guardar sesión y continuar
                             this@LoginActivity.getSharedPreferences("session_prefs", MODE_PRIVATE)
                                 .edit().putBoolean("is_logged_in", true).apply()
-                            startActivity(Intent(this@LoginActivity, InventoryListActivity::class.java))
-                            finish()
+
+                            if (fromWidgetToggle && widgetToggleId != -1) {
+                                val toggleIntent = Intent(this@LoginActivity, InventoryWidgetProvider::class.java).apply {
+                                    action = InventoryWidgetProvider.ACTION_TOGGLE
+                                    putExtra(InventoryWidgetProvider.EXTRA_WIDGET_ID, widgetToggleId)
+                                }
+                                sendBroadcast(toggleIntent)
+                                finish()
+                            } else {
+                                startActivity(Intent(this@LoginActivity, InventoryListActivity::class.java))
+                                finish()
+                            }
                         }
                     }
             )
