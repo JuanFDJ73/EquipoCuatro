@@ -59,7 +59,6 @@
         app:errorEnabled="true"
         app:errorTextColor="@color/error_red"
         app:endIconMode="password_toggle"
-        app:endIconDrawable="@drawable/ic_hide"
         app:endIconTint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

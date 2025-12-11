@@ -28,10 +28,6 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Leer si se inició desde el widget (para volver al widget y ejecutar toggle)
-        fromWidgetToggle = intent.getBooleanExtra("from_widget_toggle", false)
-        widgetToggleId = intent.getIntExtra("extra_widget_id", -1)
-
         // Si ya hay sesión guardada, entrar directamente al inventario
         val sessionPrefs = getSharedPreferences("session_prefs", MODE_PRIVATE)
         if (sessionPrefs.getBoolean("is_logged_in", false)) {
