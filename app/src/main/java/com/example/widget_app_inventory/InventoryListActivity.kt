@@ -95,7 +95,7 @@ class InventoryListActivity : ComponentActivity() {
 
                         },
                         // Toolbar
-                        colors = TopAppBarDefaults.topAppBarColors(containerColor = colorResource(id = R.color.Surface))
+                        colors = TopAppBarDefaults.topAppBarColors(containerColor = colorResource(id = R.color.Header))
                     )
                 },
                 floatingActionButton = {
@@ -140,7 +140,7 @@ class InventoryListActivity : ComponentActivity() {
                                         .padding(vertical = 8.dp)
                                         .clickable {
                                             val intent = Intent(this@InventoryListActivity, ItemDetailActivity::class.java)
-                                            intent.putExtra("itemId", item.id)
+                                            intent.putExtra("codigo", item.codigo)
                                             startActivity(intent)
                                         },
                                     shape = RoundedCornerShape(12.dp),
@@ -155,7 +155,7 @@ class InventoryListActivity : ComponentActivity() {
                                     ) {
                                         Column(modifier = Modifier.fillMaxWidth(0.7f)) {
                                             Text(text = item.name, color = colorResource(id = R.color.black), style = MaterialTheme.typography.titleMedium)
-                                            Text(text = "Id: ${item.id}", color = colorResource(id = R.color.TextSecondary), style = MaterialTheme.typography.bodySmall)
+                                            Text(text = "Id: ${item.codigo}", color = colorResource(id = R.color.TextSecondary), style = MaterialTheme.typography.bodySmall)
                                         }
                                         Text(text = formatPrice(item.price), color = colorResource(id = R.color.Primary), style = MaterialTheme.typography.titleSmall)
                                     }

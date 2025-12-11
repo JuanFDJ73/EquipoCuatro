@@ -18,9 +18,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.shape.RoundedCornerShape
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class AddProductActivity : ComponentActivity() {
+    private val db = FirebaseFirestore.getInstance()
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val vm = androidx.lifecycle.ViewModelProvider(this, androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.getInstance(application))[com.example.widget_app_inventory.viewmodel.InventoryViewModel::class.java]
@@ -35,11 +38,15 @@ class AddProductActivity : ComponentActivity() {
                 val qty = cantidad.toIntOrNull() ?: 0
                 val item = com.example.widget_app_inventory.model.Item(
                     id = 0,
+                    codigo = codigo,
                     name = nombre,
                     price = priceDouble,
                     quantity = qty
                 )
                 vm.insertItem(item) {
+                    // Guardar también en Firestore
+                    saveToFirestore(codigo, nombre, priceDouble, qty)
+                    
                     // Notificar widgets para refrescar
                     try {
                         val mgr = android.appwidget.AppWidgetManager.getInstance(this)
@@ -59,6 +66,38 @@ class AddProductActivity : ComponentActivity() {
                 }
             })
         }
+    }
+
+    private fun saveToFirestore(codigo: String, nombre: String, precio: Double, cantidad: Int) {
+        // Obtener usuario actual
+        val currentUser = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
+        if (currentUser == null) {
+            android.util.Log.e("Firestore", "Usuario no autenticado")
+            return
+        }
+
+        val userId = currentUser.uid
+
+        val productData = hashMapOf(
+            "codigo" to codigo,
+            "nombre" to nombre,
+            "precio" to precio,
+            "cantidad" to cantidad,
+            "timestamp" to com.google.firebase.Timestamp.now()
+        )
+
+        // Guardar en Firestore: usuarios/{userId}/IdProductos/{codigo}
+        db.collection("usuarios")
+            .document(userId)
+            .collection("IdProductos")
+            .document(codigo)
+            .set(productData)
+            .addOnSuccessListener {
+                android.util.Log.d("Firestore", "Producto guardado con ID: $codigo")
+            }
+            .addOnFailureListener { e ->
+                android.util.Log.e("Firestore", "Error guardando producto", e)
+            }
     }
 }
 
@@ -84,7 +123,7 @@ fun AddProductScreen(onBack: () -> Unit, onSave: (codigo: String, nombre: String
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF424242))
             )
         },
-        containerColor = Color(0xCC000000)
+        containerColor = Color(0xFF2A2A2A)
     ) { innerPadding ->
         Column(
             modifier = Modifier

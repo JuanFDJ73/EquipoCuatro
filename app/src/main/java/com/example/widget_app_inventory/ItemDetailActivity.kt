@@ -31,30 +31,30 @@ class ItemDetailActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val itemId = intent?.getLongExtra("itemId", -1L) ?: -1L
+        val itemCode = intent?.getStringExtra("codigo") ?: ""
         setContent {
-            ItemDetailApp(itemId)
+            ItemDetailApp(itemCode)
         }
     }
 
     @Composable
-    fun ItemDetailApp(itemId: Long) {
+    fun ItemDetailApp(itemCode: String) {
         MaterialTheme {
             Surface(
                 modifier = Modifier.fillMaxSize(),
                 color = colorResource(id = R.color.Background)
             ) {
-                ItemDetailScreen(itemId)
+                ItemDetailScreen(itemCode)
             }
         }
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun ItemDetailScreen(itemId: Long) {
+    fun ItemDetailScreen(itemCode: String) {
         var showDialog by remember { mutableStateOf(false) }
-        val itemState = produceState<Item?>(initialValue = null, itemId) {
-            value = repo.getItem(itemId)
+        val itemState = produceState<Item?>(initialValue = null, itemCode) {
+            value = repo.getItemByCode(itemCode)
         }
         val item = itemState.value
         val coroutineScope = rememberCoroutineScope()
@@ -84,7 +84,7 @@ class ItemDetailActivity : ComponentActivity() {
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = colorResource(id = R.color.Surface)
+                        containerColor = colorResource(id = R.color.Header)
                     )
                 )
             },
@@ -93,7 +93,7 @@ class ItemDetailActivity : ComponentActivity() {
                     onClick = {
                         startActivity(
                             Intent(this@ItemDetailActivity, EditArticleActivity::class.java)
-                                .putExtra("itemId", itemId)
+                                .putExtra("codigo", itemCode)
                         )
                     },
                     containerColor = colorResource(id = R.color.Primary),
@@ -129,6 +129,15 @@ class ItemDetailActivity : ComponentActivity() {
                             fontWeight = FontWeight.SemiBold,
                             color = colorResource(id = R.color.black)
                         )
+                        
+                        // Mostrar el código del producto
+                        Text(
+                            text = "Código: ${item?.codigo ?: "-"}",
+                            fontSize = 12.sp,
+                            color = colorResource(id = R.color.TextSecondary),
+                            fontWeight = FontWeight.Normal
+                        )
+                        
                         Spacer(modifier = Modifier.height(8.dp))
 
                         val priceText = item?.let { try { currencyFormatter.format(it.price) } catch (_: Exception) { "$ ${it.price}" } } ?: "-"
@@ -196,7 +205,7 @@ class ItemDetailActivity : ComponentActivity() {
                                 onClick = {
                                     showDialog = false
                                     coroutineScope.launch {
-                                        val deleted = repo.deleteItem(itemId)
+                                        val deleted = repo.deleteItemByCode(itemCode)
                                         if (deleted) {
                                             // Actualizar widgets tras la eliminación
                                             try {

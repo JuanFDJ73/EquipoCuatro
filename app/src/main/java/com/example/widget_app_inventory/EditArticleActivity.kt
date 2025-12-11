@@ -28,28 +28,28 @@ class EditArticleActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val itemId = intent?.getLongExtra("itemId", -1L) ?: -1L
+        val itemCode = intent?.getStringExtra("codigo") ?: ""
         setContent {
-            EditArticleScreen(itemId)
+            EditArticleScreen(itemCode)
         }
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun EditArticleScreen(itemId: Long) {
+    fun EditArticleScreen(itemCode: String) {
         var nombre by remember { mutableStateOf("") }
         var precio by remember { mutableStateOf("") }
         var cantidad by remember { mutableStateOf("") }
-        var loadedId by remember { mutableStateOf<Long?>(null) }
-        val itemState = produceState<Item?>(initialValue = null, itemId) {
-            value = repo.getItem(itemId)
+        var codigo by remember { mutableStateOf("") }
+        val itemState = produceState<Item?>(initialValue = null, itemCode) {
+            value = repo.getItemByCode(itemCode)
         }
         val item = itemState.value
         val coroutineScope = rememberCoroutineScope()
 
         LaunchedEffect(item) {
             item?.let {
-                loadedId = it.id
+                codigo = it.codigo
                 nombre = it.name
                 precio = it.price.toString()
                 cantidad = it.quantity.toString()
@@ -69,7 +69,7 @@ class EditArticleActivity : ComponentActivity() {
                     navigationIcon = {
                         IconButton(onClick = {
                             startActivity(Intent(this@EditArticleActivity, ItemDetailActivity::class.java)
-                                .putExtra("itemId", itemId))
+                                .putExtra("codigo", itemCode))
                             finish()
                         }) {
                             Icon(
@@ -80,7 +80,7 @@ class EditArticleActivity : ComponentActivity() {
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = colorResource(id = R.color.Surface)
+                        containerColor = colorResource(id = R.color.Header)
                     )
                 )
             },
@@ -96,7 +96,7 @@ class EditArticleActivity : ComponentActivity() {
             ) {
                 // Mostrar ID del artículo
                 Text(
-                    text = "Id: ${loadedId ?: "-"}",
+                    text = "Código: ${codigo.takeIf { it.isNotEmpty() } ?: "-"}",
                     color = colorResource(id = R.color.TextPrimary),
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.fillMaxWidth()
@@ -172,11 +172,11 @@ class EditArticleActivity : ComponentActivity() {
                 Button(
                     onClick = {
                         coroutineScope.launch {
-                            val idLong = loadedId ?: return@launch
                             val priceDouble = precio.toDoubleOrNull() ?: 0.0
                             val qty = cantidad.toIntOrNull() ?: 0
-                            val updated = Item(id = idLong, name = nombre, price = priceDouble, quantity = qty)
+                            val updated = Item(id = 0, codigo = codigo, name = nombre, price = priceDouble, quantity = qty)
                             val ok = repo.updateItem(updated)
+                            android.util.Log.d("EditArticleActivity", "Update result: $ok")
                             if (ok) {
                                 try {
                                     val mgr = android.appwidget.AppWidgetManager.getInstance(this@EditArticleActivity)
@@ -190,6 +190,8 @@ class EditArticleActivity : ComponentActivity() {
 
                                 startActivity(Intent(this@EditArticleActivity, InventoryListActivity::class.java))
                                 finish()
+                            } else {
+                                android.widget.Toast.makeText(this@EditArticleActivity, "Error al actualizar producto", android.widget.Toast.LENGTH_SHORT).show()
                             }
                         }
                     },
