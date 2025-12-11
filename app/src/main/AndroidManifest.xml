@@ -30,7 +30,7 @@
             android:theme="@style/Theme.WidgetAppInventory" />
 
         <activity
-            android:name=".ItemDetailActivity"
+            android:name=".ui.itemdetail.ItemDetailActivity"
             android:exported="true"
             android:label="Item Detail"
             android:theme="@style/Theme.WidgetAppInventory" />
