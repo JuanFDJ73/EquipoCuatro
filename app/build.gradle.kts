@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
+    kotlin("kapt")
 }
 
 android {
@@ -111,4 +113,8 @@ dependencies {
 
     //Glide
     implementation ("com.github.bumptech.glide:glide:4.12.0")
+
+    //Hilt
+    implementation("com.google.dagger:hilt-android:2.51")
+    kapt("com.google.dagger:hilt-compiler:2.51")
 }
