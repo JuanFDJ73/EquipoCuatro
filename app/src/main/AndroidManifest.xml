@@ -42,7 +42,7 @@
             android:theme="@style/Theme.WidgetAppInventory" />
 
         <activity
-            android:name=".EditArticleActivity"
+            android:name=".ui.editarticle.EditArticleActivity"
             android:exported="true"
             android:label="Edit Article"
             android:theme="@style/Theme.WidgetAppInventory" />
